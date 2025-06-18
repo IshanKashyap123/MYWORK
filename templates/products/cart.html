@@ -25,26 +25,45 @@
       font-weight: bold;
       color: #28a745;
     }
+    .action-buttons {
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    .btn-cancel {
+      background-color: red;
+      color: white;
+      font-family: cursive;
+      border: none;
+      opacity: 0.6;
+    }
     .btn-pay {
-      margin-top: 20px;
+      font-family: cursive;
+    }
+
+    @media (max-width: 768px) {
+      .total-amount {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+      }
     }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <h2>Your Cart</h2>
+  <h2 class="mb-4">Your Cart</h2>
   <div id="cart-items"></div>
   
-  <div class="d-flex justify-content-between align-items-center">
-    <div class="total-amount" id="total">Total: ₹0</div>
-    <button class="btn btn-success btn-lg" style="background-color:red ;color: white; font-family:cursive; margin-right: 1vw;  margin-top: 3vh;border: 0px;opacity: 60%;" onclick="cancel()">Cancel</button>
-    <button class="btn btn-success btn-lg" onclick="payNow()" style="margin-top: 3vh;position: relative;left:-100px;font-family:cursive;">Pay Now</button>
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mt-4">
+    <div class="total-amount mb-3 mb-md-0" id="total">Total: ₹0</div>
+    <div class="d-flex action-buttons">
+      <button class="btn btn-cancel btn-lg" onclick="cancel()">Cancel</button>
+      <button class="btn btn-success btn-lg btn-pay" onclick="payNow()">Pay Now</button>
+    </div>
   </div>
 </div>
 
 <script>
-  // Retrieve cart data from localStorage
   const cartData = JSON.parse(localStorage.getItem('phantomCart')) || {};
   const cartContainer = document.getElementById('cart-items');
   let total = 0;
@@ -53,35 +72,31 @@
     return amount.toLocaleString('en-IN');
   }
 
-  // Render each cart item
   Object.values(cartData).forEach(item => {
     const itemTotal = item.price * item.quantity;
     total += itemTotal;
 
     const itemHTML = `
       <div class="cart-item row align-items-center">
-        <div class="col-md-6 item-name">${item.name}</div>
-        <div class="col-md-2">Qty: ${item.quantity}</div>
-        <div class="col-md-2">Price: ₹${formatINR(item.price)}</div>
-        <div class="col-md-2 text-end">Subtotal: ₹${formatINR(itemTotal)}</div>
+        <div class="col-12 col-md-6 item-name">${item.name}</div>
+        <div class="col-6 col-md-2">Qty: ${item.quantity}</div>
+        <div class="col-6 col-md-2">Price: ₹${formatINR(item.price)}</div>
+        <div class="col-12 col-md-2 text-md-end">Subtotal: ₹${formatINR(itemTotal)}</div>
       </div>
     `;
     cartContainer.insertAdjacentHTML('beforeend', itemHTML);
   });
 
-  // Display total price
   document.getElementById('total').innerText = `Total: ₹${formatINR(total)}`;
 
   function payNow() {
     alert("Proceeding to payment gateway (dummy)...");
-    // You can send cartData to backend using fetch or AJAX here
     localStorage.removeItem('phantomCart');
     window.location.href = "/";
   }
 
   function cancel() {
     alert("warning.... your cart will be cleared    (┬┬﹏┬┬)");
-    // You can send cartData to backend using fetch or AJAX here
     localStorage.removeItem('phantomCart');
     window.location.href = "/";
   }
